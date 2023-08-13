@@ -14,6 +14,7 @@ from email.message import EmailMessage
 def notify(title, content):
     print(content)
     print("\n")
+    contacts = EMAILS.split("&")
     try:
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.163.com", 465, context=context) as smtp:
@@ -22,23 +23,26 @@ def notify(title, content):
                 subject = title
                 body = f"{contact}邮件主体内容"
                 msg = EmailMessage()
-                msg['subject'] = subject  # 邮件标题
-                msg['From'] = EMAIL_ADDRESS  # 邮件发件人
-                msg['To'] = contact  # 邮件的收件人
-                msg.set_content(body)  # 使用set_content()方法设置邮件的主体内容
-                # 使用send_message方法发送邮件信息
+                msg['subject'] = subject
+                msg['From'] = EMAIL_ADDRESS
+                msg['To'] = contact
+                msg.set_content(body)
                 smtp.send_message(msg)
-
-
     except Exception as e:
         print(e)
-
 
 
 THRESHOLD = 10
 EMAIL_ADDRESS = "diskstation422@163.com"
 EMAIL_PASSWORD = "ACQPCUYQVBFJATWH"
-contacts = os.getenv("EMAIL")
+EMAILS = os.getenv("EMAIL")
+if "EMAIL_ADDRESS" in os.environ:
+    if len(os.environ["EMAIL_ADDRESS"]) > 1:
+        EMAIL_ADDRESS = os.environ["EMAIL_ADDRESS"]
+
+if "EMAIL_PASSWORD" in os.environ:
+    if len(os.environ["EMAIL_PASSWORD"]) > 1:
+        EMAIL_PASSWORD = os.environ["EMAIL_PASSWORD"]
 
 
 url = "http://auth.dlut.edu.cn"
