@@ -21,7 +21,7 @@ def notify(title, content):
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             for contact in contacts:
                 subject = title
-                body = f"{contact}邮件主体内容"
+                body = content
                 msg = EmailMessage()
                 msg['subject'] = subject
                 msg['From'] = EMAIL_ADDRESS
