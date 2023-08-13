@@ -33,8 +33,8 @@ def notify(title, content):
 
 
 THRESHOLD = 10
-EMAIL_ADDRESS = "diskstation422@163.com"
-EMAIL_PASSWORD = "ACQPCUYQVBFJATWH"
+EMAIL_ADDRESS = "@163.com"
+EMAIL_PASSWORD = ""
 EMAILS = os.getenv("EMAIL")
 if "EMAIL_ADDRESS" in os.environ:
     if len(os.environ["EMAIL_ADDRESS"]) > 1:
@@ -73,6 +73,9 @@ try:
             if response.status_code == 200:
                 notify("流量超出通知", "账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，已退出账号")
             else:
-                notify("流量超出","账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，但退出失败")
+                notify("流量超出", "账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，但退出失败")
+        else:
+            print("账号 " + userId + "流量还多，剩余流量：" + str(flowBalances))
+
 except requests.exceptions.ConnectionError as e:
     notify('未登录', "没有登陆账户")
