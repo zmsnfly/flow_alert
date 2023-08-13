@@ -1,3 +1,8 @@
+"""
+cron: 0 0 * * *
+new Env('校园网流量预警');
+"""
+
 import requests
 import re
 import json
