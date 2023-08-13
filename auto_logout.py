@@ -75,7 +75,7 @@ try:
             else:
                 notify("流量超出", "账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，但退出失败")
         else:
-            print("账号 " + userId + "流量还多，剩余流量：" + str(flowBalances))
+            print("账号 " + userId + "流量还多，剩余流量：" + str(flowBalances) + "G")
 
 except requests.exceptions.ConnectionError as e:
     notify('未登录', "没有登陆账户")
