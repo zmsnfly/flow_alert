@@ -69,11 +69,12 @@ try:
         ballinfo_dict = json.loads(ballinfo)
         flowBalances = float(ballinfo_dict[1]['value'])/1000000000
         if flowBalances < float(THRESHOLD):
+            notify("流量超出通知", "账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，已退出账号")
             response = s.get(url_logout, headers=headers)
             if response.status_code == 200:
-                notify("流量超出通知", "账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，已退出账号")
+                print("账号已退出")
             else:
-                notify("流量超出", "账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，但退出失败")
+                print("账号退出失败")
         else:
             print("账号 " + userId + "流量还多，剩余流量：" + str(flowBalances) + "G")
 
