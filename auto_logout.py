@@ -67,8 +67,8 @@ try:
         if flowBalances < float(THRESHOLD):
             response = s.get(url_logout, headers=headers)
             if response.status_code == 200:
-                notify("流量超出，已退出账号")
+                notify("流量超出通知", "账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，已退出账号")
             else:
-                notify("流量超出，但退出失败")
+                notify("流量超出","账号 " + userId + " 剩余流量：" + str(flowBalances) + "G，但退出失败")
 except requests.exceptions.ConnectionError as e:
     notify('未登录', "没有登陆账户")
