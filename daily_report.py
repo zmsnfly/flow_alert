@@ -1,6 +1,6 @@
 """
 cron: 0 22 * * *
-new Env('校园网流量预警');
+new Env('校园网流量状态日报');
 """
 
 import requests
