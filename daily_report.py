@@ -6,7 +6,8 @@ new Env('校园网流量状态日报');
 import requests
 import json
 import os
-
+import redis
+from datetime import datetime,timedelta
 
 def notify(title, content):
     print(content)
@@ -32,8 +33,9 @@ def notify(title, content):
         print(e)
 
 
-PUSH_PLUS_TOKEN = '62663a910c9d4dd2a08ef2d3f9552615'
+PUSH_PLUS_TOKEN = ''
 PUSH_PLUS_Group = 'flow'
+dic_db = {"12003068": 0}
 
 if "PUSH_PLUS_TOKEN" in os.environ:
     if len(os.environ["PUSH_PLUS_TOKEN"]) > 1:
@@ -61,8 +63,20 @@ try:
         accountFee = str(userinfo_dict['accountFee'])+'元'
         ballinfo = userinfo_dict['ballInfo']
         ballinfo_dict = json.loads(ballinfo)
-        flowBalances = str(float(ballinfo_dict[1]['value'])/1000000000)+'G'
-        data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee + '\n\n**剩余流量**：' + flowBalances
+        flowBalances = float(ballinfo_dict[1]['value'])/1000000000
+        flowBalances_str = str(flowBalances)+'G'
+        r = redis.Redis(host='192.168.31.76', port=6379, db=dic_db[userId], password='dlut1949')
+        date = datetime.now()
+        date_str = date.strftime('%Y%m%d')
+        r.set(date_str, flowBalances)
+        yesterday = date - timedelta(days=1)
+        yesterday_str = yesterday.strftime('%Y%m%d')
+        yesterday_flow = r.get(yesterday_str)
+        delta = 0.0
+        if yesterday_flow is not None:
+            delta = float(yesterday_flow) - flowBalances
+        data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee + '\n\n**剩余流量**：' + flowBalances_str +\
+               '\n\n**今日使用**：' + str(delta) + 'G'
         notify('校园网流量日报', data)
 
 except requests.exceptions.ConnectionError as e:
