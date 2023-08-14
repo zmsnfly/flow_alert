@@ -7,7 +7,7 @@ import requests
 import json
 import os
 import redis
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 
 def notify(title, content):
     print(content)
@@ -66,16 +66,17 @@ try:
         accountFee = float(ballinfo_dict[0]['value'])
         flowBalances_str = str(flowBalances)+'G'
         accountFee_str = str(accountFee)+'元'
-        r = redis.Redis(host='192.168.31.76', port=6379, db=dic_db[userId], password='dlut1949')
-        date = datetime.now()
-        date_str = date.strftime('%Y%m%d')
-        r.set(date_str, flowBalances)
-        yesterday = date - timedelta(days=1)
-        yesterday_str = yesterday.strftime('%Y%m%d')
-        yesterday_flow = r.get(yesterday_str)
         delta = 0.0
-        if yesterday_flow is not None:
-            delta = float(yesterday_flow) - flowBalances
+        if dic_db[userId] is not None:
+            r = redis.Redis(host='192.168.31.76', port=6379, db=dic_db[userId], password='dlut1949')
+            date = datetime.now()
+            date_str = date.strftime('%Y%m%d')
+            r.set(date_str, flowBalances)
+            yesterday = date - timedelta(days=1)
+            yesterday_str = yesterday.strftime('%Y%m%d')
+            yesterday_flow = r.get(yesterday_str)
+            if yesterday_flow is not None:
+                delta = float(yesterday_flow) - flowBalances
         data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee_str + '\n\n**剩余流量**：' + flowBalances_str +\
                '\n\n**今日使用**：' + str(delta) + 'G'
         notify('校园网流量日报', data)
