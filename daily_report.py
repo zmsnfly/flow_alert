@@ -60,11 +60,12 @@ try:
     if userId is None:
         notify('未登录', "没有登陆账户")
     else:
-        accountFee = str(userinfo_dict['accountFee'])+'元'
         ballinfo = userinfo_dict['ballInfo']
         ballinfo_dict = json.loads(ballinfo)
         flowBalances = float(ballinfo_dict[1]['value'])/1000000000
+        accountFee = float(ballinfo_dict[0]['value'])
         flowBalances_str = str(flowBalances)+'G'
+        accountFee_str = str(accountFee)+'元'
         r = redis.Redis(host='192.168.31.76', port=6379, db=dic_db[userId], password='dlut1949')
         date = datetime.now()
         date_str = date.strftime('%Y%m%d')
@@ -75,7 +76,7 @@ try:
         delta = 0.0
         if yesterday_flow is not None:
             delta = float(yesterday_flow) - flowBalances
-        data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee + '\n\n**剩余流量**：' + flowBalances_str +\
+        data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee_str + '\n\n**剩余流量**：' + flowBalances_str +\
                '\n\n**今日使用**：' + str(delta) + 'G'
         notify('校园网流量日报', data)
 
