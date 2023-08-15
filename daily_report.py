@@ -9,6 +9,7 @@ import os
 import redis
 from datetime import datetime, timedelta
 
+
 def notify(title, content):
     print(content)
     print("\n")
@@ -46,6 +47,7 @@ if "PUSH_PLUS_Group" in os.environ:
 
 
 url = "http://auth.dlut.edu.cn"
+url_info = "http://auth.dlut.edu.cn/eportal/InterFace.do?method=getOnlineUserInfo"
 headers = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36',
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -54,7 +56,7 @@ headers = {
 s = requests.Session()
 try:
     s.get(url, headers=headers)
-    response = s.get('http://auth.dlut.edu.cn/eportal/InterFace.do?method=getOnlineUserInfo', headers=headers)
+    response = s.get(url_info, headers=headers)
     userinfo_dict = json.loads(response.text)
     userId = userinfo_dict['userId']
     if userId is None:
