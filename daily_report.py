@@ -35,8 +35,10 @@ def notify(title, content):
 
 
 PUSH_PLUS_TOKEN = ''
-PUSH_PLUS_Group = 'flow'
+# PUSH_PLUS_Group = 'flow'
+PUSH_PLUS_Group = 'jd'
 dic_db = {"12003068": 0}
+flow_total = 100.0
 
 if "PUSH_PLUS_TOKEN" in os.environ:
     if len(os.environ["PUSH_PLUS_TOKEN"]) > 1:
@@ -77,7 +79,9 @@ try:
             yesterday = date - timedelta(days=1)
             yesterday_str = yesterday.strftime('%Y%m%d')
             yesterday_flow = r.get(yesterday_str)
-            if yesterday_flow is not None:
+            if date.day == 1:
+                delta = flow_total - flowBalances
+            elif yesterday_flow is not None:
                 delta = float(yesterday_flow) - flowBalances
         data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee_str + '\n\n**剩余流量**：' + flowBalances_str +\
                '\n\n**今日使用**：' + str(delta) + 'G'
