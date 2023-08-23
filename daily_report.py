@@ -79,9 +79,9 @@ try:
             yesterday = date - timedelta(days=1)
             yesterday_str = yesterday.strftime('%Y%m%d')
             yesterday_flow = r.get(yesterday_str)
-            if date.day == 1:
+            if date.day == 1 or yesterday_flow is None:
                 delta = flow_total - flowBalances
-            elif yesterday_flow is not None:
+            else:
                 delta = float(yesterday_flow) - flowBalances
         data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee_str + '\n\n**剩余流量**：' + flowBalances_str +\
                '\n\n**今日使用**：' + str(delta) + 'G'
