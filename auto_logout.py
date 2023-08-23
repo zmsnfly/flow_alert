@@ -79,4 +79,4 @@ try:
             print("账号 " + userId + "流量还多，剩余流量：" + str(flowBalances) + "G")
 
 except requests.exceptions.ConnectionError as e:
-    notify('未登录', "没有登陆账户")
+    print('未登录', "没有登陆账户")
