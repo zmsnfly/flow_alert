@@ -37,7 +37,7 @@ def notify(title, content):
 PUSH_PLUS_TOKEN = ''
 # PUSH_PLUS_Group = 'flow'
 PUSH_PLUS_Group = 'jd'
-dic_db = {"12003068": 0, "11803058": 1}
+dic_db = {"12003068": 0, "11803058": 1, "72203001": 3}
 flow_total = 100.0
 
 if "PUSH_PLUS_TOKEN" in os.environ:
