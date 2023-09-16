@@ -63,7 +63,7 @@ try:
     userinfo_dict = json.loads(response.text)
     userId = userinfo_dict['userId']
     if userId is None:
-        notify('未登录', "没有登陆账户")
+        print("未登录，没有登陆账户")
     else:
         ballinfo = userinfo_dict['ballInfo']
         ballinfo_dict = json.loads(ballinfo)
