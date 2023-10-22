@@ -71,7 +71,7 @@ try:
         flowBalances_str = str(flowBalances)+'G'
         accountFee_str = str(accountFee)+'元'
         delta = 0.0
-        if dic_db[userId] is not None:
+        if userId in dic_db:
             r = redis.Redis(host='192.168.31.76', port=6379, db=dic_db[userId], password='dlut1949')
             date = datetime.now()
             date_str = date.strftime('%Y%m%d')
