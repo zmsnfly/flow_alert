@@ -73,9 +73,7 @@ try:
         r = redis.StrictRedis(host='192.168.31.76', port=6379, password='dlut1949')
         r.select(0)
 
-        if r.exists(userId):
-            r.select(int(r.get(userId)))
-        else:
+        if not r.exists(userId):
             cursor = '0'  # 初始化游标
             max_value = None
             while True:
@@ -97,7 +95,7 @@ try:
                     print("test")
                     break
             r.set(userId, max_value+1)
-
+        r.select(int(r.get(userId)))
         date = datetime.now()
         date_str = date.strftime('%Y%m%d')
         r.set(date_str, flowBalances)
