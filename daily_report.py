@@ -35,9 +35,8 @@ def notify(title, content):
 
 
 PUSH_PLUS_TOKEN = ''
-# PUSH_PLUS_Group = 'flow'
-PUSH_PLUS_Group = 'jd'
-dic_db = {"12003068": 0, "11803058": 1, "32203048": 2, "72203001": 3}
+PUSH_PLUS_Group = ''
+# dic_db = {"12003068": 0, "11803058": 1, "32203048": 2, "72203001": 3}
 flow_total = 100.0
 
 if "PUSH_PLUS_TOKEN" in os.environ:
@@ -71,18 +70,42 @@ try:
         flowBalances_str = str(flowBalances)+'G'
         accountFee_str = str(accountFee)+'元'
         delta = 0.0
-        if userId in dic_db:
-            r = redis.Redis(host='192.168.31.76', port=6379, db=dic_db[userId], password='dlut1949')
-            date = datetime.now()
-            date_str = date.strftime('%Y%m%d')
-            r.set(date_str, flowBalances)
-            yesterday = date - timedelta(days=1)
-            yesterday_str = yesterday.strftime('%Y%m%d')
-            yesterday_flow = r.get(yesterday_str)
-            if date.day == 1 or yesterday_flow is None:
-                delta = flow_total - flowBalances
-            else:
-                delta = float(yesterday_flow) - flowBalances
+        r = redis.StrictRedis(host='192.168.31.76', port=6379, password='dlut1949')
+        r.select(0)
+        if r.exists(userId):
+            r.select(int(r.get(userId)))
+        else:
+            cursor = '0'  # 初始化游标
+            max_value = None
+
+            while True:
+                cursor, keys = r.scan(cursor=cursor, count=1000)
+                for key in keys:
+                    value = r.get(key)
+                    if value is not None:
+                        try:
+                            int_value = int(value)
+                            if max_value is None or int_value > max_value:
+                                max_value = int_value
+                        except ValueError:
+                            pass
+
+                if cursor == b'0':
+                    break
+            r.set(userId, max_value+1)
+
+        date = datetime.now()
+        date_str = date.strftime('%Y%m%d')
+        r.set(date_str, flowBalances)
+        yesterday = date - timedelta(days=1)
+        yesterday_str = yesterday.strftime('%Y%m%d')
+        yesterday_flow = r.get(yesterday_str)
+        if date.day == 1 or yesterday_flow is None:
+            delta = flow_total - flowBalances
+        else:
+            delta = float(yesterday_flow) - flowBalances
+
+
         data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee_str + '\n\n**剩余流量**：' + flowBalances_str +\
                '\n\n**今日使用**：' + str(delta) + 'G'
         notify('校园网流量日报', data)
