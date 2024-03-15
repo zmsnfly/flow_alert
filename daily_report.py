@@ -81,6 +81,7 @@ try:
             while True:
                 cursor, keys = r.scan(cursor=cursor, count=10)
                 if not keys:
+                    max_value=0
                     break
                 for key in keys:
                     print(2)
