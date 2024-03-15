@@ -8,6 +8,7 @@ import json
 import os
 import redis
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 
 def notify(title, content):
@@ -36,7 +37,6 @@ def notify(title, content):
 
 PUSH_PLUS_TOKEN = ''
 PUSH_PLUS_Group = ''
-# dic_db = {"12003068": 0, "11803058": 1, "32203048": 2, "72203001": 3}
 flow_total = 100.0
 
 if "PUSH_PLUS_TOKEN" in os.environ:
@@ -45,7 +45,9 @@ if "PUSH_PLUS_TOKEN" in os.environ:
 if "PUSH_PLUS_Group" in os.environ:
     if len(os.environ["PUSH_PLUS_Group"]) > 1:
         PUSH_PLUS_Group = os.environ["PUSH_PLUS_Group"]
-
+if "FLOW_TOTAL" in os.environ:
+    if len(os.environ["FLOW_TOTAL"]) > 1:
+        flow_total = Decimal(os.environ["FLOW_TOTAL"])
 
 url = "http://auth.dlut.edu.cn"
 url_info = "http://auth.dlut.edu.cn/eportal/InterFace.do?method=getOnlineUserInfo"
@@ -92,7 +94,6 @@ try:
                         except ValueError:
                             pass
                 if cursor == b'0':
-                    print("test")
                     break
             r.set(userId, max_value+1)
         r.select(int(r.get(userId)))
