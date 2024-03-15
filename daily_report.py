@@ -72,15 +72,18 @@ try:
         delta = 0.0
         r = redis.StrictRedis(host='192.168.31.76', port=6379, password='dlut1949')
         r.select(0)
+
         if r.exists(userId):
             r.select(int(r.get(userId)))
         else:
             cursor = '0'  # 初始化游标
             max_value = None
-
             while True:
-                cursor, keys = r.scan(cursor=cursor, count=1000)
+                cursor, keys = r.scan(cursor=cursor, count=10)
+                if not keys:
+                    break
                 for key in keys:
+                    print(2)
                     value = r.get(key)
                     if value is not None:
                         try:
@@ -89,8 +92,8 @@ try:
                                 max_value = int_value
                         except ValueError:
                             pass
-
                 if cursor == b'0':
+                    print("test")
                     break
             r.set(userId, max_value+1)
 
