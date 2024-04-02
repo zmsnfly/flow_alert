@@ -75,27 +75,13 @@ try:
         r = redis.StrictRedis(host='192.168.31.76', port=6379, password='dlut1949')
         r.select(0)
 
-        if not r.exists(userId):
-            cursor = '0'  # 初始化游标
-            max_value = None
-            while True:
-                cursor, keys = r.scan(cursor=cursor, count=10)
-                if not keys:
-                    max_value=0
-                    break
-                for key in keys:
-                    print(2)
-                    value = r.get(key)
-                    if value is not None:
-                        try:
-                            int_value = int(value)
-                            if max_value is None or int_value > max_value:
-                                max_value = int_value
-                        except ValueError:
-                            pass
-                if cursor == b'0':
-                    break
-            r.set(userId, max_value+1)
+        max_value = float('-inf')
+        for key in r.scan_iter("*"):
+            value = r.get(key)
+            if value.isdigit() and int(value) > max_value:
+                max_value = int(value)
+
+        r.set(userId, max_value+1)
         r.select(int(r.get(userId)))
         date = datetime.now()
         date_str = date.strftime('%Y%m%d')
