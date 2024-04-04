@@ -67,21 +67,25 @@ try:
     else:
         ballinfo = userinfo_dict['ballInfo']
         ballinfo_dict = json.loads(ballinfo)
-        flowBalances = float(ballinfo_dict[1]['value'])/1000000000
+        flowBalances = float(ballinfo_dict[1]['value']) / 1000000000
         accountFee = float(ballinfo_dict[0]['value'])
-        flowBalances_str = str(flowBalances)+'G'
-        accountFee_str = str(accountFee)+'元'
+        flowBalances_str = str(flowBalances) + 'G'
+        accountFee_str = str(accountFee) + '元'
         delta = 0.0
         r = redis.StrictRedis(host='192.168.31.76', port=6379, password='dlut1949')
         r.select(0)
+        database = r.get(userId)
+        if not database:
+            database = float('-inf')
+            for key in r.scan_iter("*"):
+                value = r.get(key)
+                if value.isdigit() and int(value) > database:
+                    database = int(value)
+            database = database + 1
+        else:
+            pass
 
-        max_value = float('-inf')
-        for key in r.scan_iter("*"):
-            value = r.get(key)
-            if value.isdigit() and int(value) > max_value:
-                max_value = int(value)
-
-        r.set(userId, max_value+1)
+        r.set(userId, database)
         r.select(int(r.get(userId)))
         date = datetime.now()
         date_str = date.strftime('%Y%m%d')
@@ -94,8 +98,7 @@ try:
         else:
             delta = float(yesterday_flow) - flowBalances
 
-
-        data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee_str + '\n\n**剩余流量**：' + flowBalances_str +\
+        data = '**登录账号**：' + userId + '\n\n**balance**：' + accountFee_str + '\n\n**剩余流量**：' + flowBalances_str + \
                '\n\n**今日使用**：' + str(delta) + 'G'
         notify('校园网流量日报', data)
 
